@@ -29,3 +29,7 @@ The "listener" is a Rasberry Pi with a mic, on 24/7 in my living room.
 #### `/notetaker`:
 The "notetaker" is a backend webservice that the listener sends audio to.  
 This service identifies conversations, creates AI summaries, and posts them in Slack.
+
+
+### Privacy?
+We will give a disclaimer / unplug it when people come over :)
