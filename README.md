@@ -3,8 +3,7 @@
 ### Perpetual Notetaker 
 
 An always-on 24/7 notaker listening to and summarizing all conversations that happen in my living room.  
-
-#### Goal: Whenever my co-founders and I have a conversation, a summary automatically appears in Slack.
+Goal: Whenever my co-founders and I have a conversation, a summary automatically appears in Slack.
 
 ### Motivation:
 
