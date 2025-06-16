@@ -15,13 +15,15 @@ from google.oauth2 import service_account
 
 bucket_name = "perpetual-notetaker-raw-audio"
 svc_account_key_path = "/home/jakezuliani/service_account_key.json"
-device = "plughw:1,0"
+slackbot_api_token_path = "/home/jakezuliani/slackbot_api_token"
+slack_socket_token_path = "/home/jakezuliani/slack_socket_listener_token"
+device = "plughw:0,0"
 record_seconds = 60
 temp_dir = "/tmp/audio_uploads"
 Path(temp_dir).mkdir(exist_ok=True)
 
-slackbot_api_token = Path.home().joinpath("slackbot_api_token").read_text().strip()
-slack_socket_token = Path.home().joinpath("slack_socket_listener_token").read_text().strip()
+slackbot_api_token = Path(slackbot_api_token_path).read_text().strip()
+slack_socket_token = Path(slack_socket_token_path).read_text().strip()
 slack_bolt_app = App(token=slackbot_api_token)
 
 
@@ -32,7 +34,6 @@ class VerboseCalledProcessError(Exception):
 def run_command(command):
     result = subprocess.run(command, shell=True, capture_output=True)
     if result.returncode != 0:
-        print("")
         raise VerboseCalledProcessError(command, result.stderr)
     else:
         return result
@@ -85,13 +86,19 @@ def tell_slack(message):
     slack_bolt_app.client.chat_postMessage(channel="#meeting-notes", text=message)
 
 
-def recorder():
+def recorder(attempt=0):
+    # This script starts becure the mic is available causing errors,
+    # retry until it should be available
     try:
         cmd = f"ffmpeg -f alsa -i {device} -segment_time 60 -f segment -reset_timestamps 1 "
         cmd += f'-strftime 1 "{temp_dir}/audio_%Y%m%d_%H%M%S.wav"'
         run_command(cmd)
     except Exception:
-        recorder.exc_info = sys.exc_info()
+        if attempt < 5:
+            sleep(1)
+            recorder(attempt + 1)
+        else:
+            recorder.exc_info = sys.exc_info()
 
 
 def main():

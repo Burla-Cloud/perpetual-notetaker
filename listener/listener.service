@@ -1,0 +1,14 @@
+[Unit]
+Description=Record and upload everythig from the mic
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Environment=PATH=/home/jakezuliani/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ExecStart=/usr/bin/python /home/jakezuliani/listener.py
+RestartSec=10
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
